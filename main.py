@@ -9,7 +9,7 @@ YELLOW = "#f7f5dd"
 FONT_NAME = "Courier"
 WORK_MIN = 25
 SHORT_BREAK_MIN = 5
-LONG_BREAK_MIN = 25
+LONG_BREAK_MIN = 20
 reps = 0
 # ---------------------------- TIMER RESET ------------------------------- #
 
@@ -27,11 +27,20 @@ window.config(padx=100, pady=50, bg=YELLOW)
 
 def start_time():
     global reps
-    if reps % 2 == 0:
-        time_reducer(SHORT_BREAK_MIN * 60)
-    else:
-        time_reducer(LONG_BREAK_MIN * 60)
+
     reps += 1
+    if  reps % 2 != 0:
+        time_reducer(WORK_MIN * 60)
+        title_label.config(text="Work", fg=GREEN)
+        check_marks["text"] = check_marks["text"] + "✔"
+    elif reps % 8 == 0:
+        time_reducer(LONG_BREAK_MIN * 60)
+        title_label.config(text="Break", fg=RED)
+    else:
+        time_reducer(SHORT_BREAK_MIN * 60)
+        title_label.config(text="Break", fg=PINK)
+
+
 
 def time_reducer(count):
     if count >= 0:
@@ -41,6 +50,8 @@ def time_reducer(count):
             count_sec = "00"
         if 0 < int(count_sec) < 10 :
             count_sec = f"0{count_sec}"
+        if count == 0:
+            start_time()
         canvas.itemconfig(timer_text, text=f"{count_min}:{count_sec}")
         window.after(10, time_reducer, count-1)
 
@@ -54,7 +65,7 @@ canvas.grid(row=1, column=1)
 timer_text = canvas.create_text(100, 130, text="00:00", fill="white", font=(FONT_NAME, 35, "bold"))
 
 
-title_label =Label(window, text="Timer", fg=GREEN, bg=YELLOW, font=(FONT_NAME, 50))
+title_label = Label(window, text="Timer", fg=GREEN, bg=YELLOW, font=(FONT_NAME, 50))
 title_label.grid(row=0, column=1)
 
 start_button = Button(text="Start", bg=YELLOW, fg=GREEN, highlightthickness=0, command=start_time)
@@ -63,7 +74,7 @@ start_button.grid(row=2, column=0)
 restart_button = Button(text="Restart", bg=YELLOW, fg=GREEN, highlightthickness=0)
 restart_button.grid(row=2, column=2)
 
-check_marks = Label(text="✔", fg=GREEN, bg=YELLOW, font=(FONT_NAME, 20, "bold"))
+check_marks = Label(text="", fg=GREEN, bg=YELLOW, font=(FONT_NAME, 20, "bold"))
 check_marks.grid(row=3, column=1)
 
 
