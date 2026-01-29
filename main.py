@@ -1,5 +1,5 @@
 from tkinter import *
-
+import math
 
 # ---------------------------- CONSTANTS ------------------------------- #
 PINK = "#e2979c"
@@ -9,8 +9,8 @@ YELLOW = "#f7f5dd"
 FONT_NAME = "Courier"
 WORK_MIN = 25
 SHORT_BREAK_MIN = 5
-LONG_BREAK_MIN = 20
-
+LONG_BREAK_MIN = 25
+reps = 0
 # ---------------------------- TIMER RESET ------------------------------- #
 
 # ---------------------------- TIMER MECHANISM ------------------------------- #
@@ -26,12 +26,23 @@ window.title("Pomodoro")
 window.config(padx=100, pady=50, bg=YELLOW)
 
 def start_time():
-    time_reducer(25)
+    global reps
+    if reps % 2 == 0:
+        time_reducer(SHORT_BREAK_MIN * 60)
+    else:
+        time_reducer(LONG_BREAK_MIN * 60)
+    reps += 1
 
 def time_reducer(count):
-    if count > 0:
-        canvas.itemconfig(timer_text, text=count)
-        window.after(1000, time_reducer, count-1)
+    if count >= 0:
+        count_min = math.floor(count / 60)
+        count_sec = count % 60
+        if count_sec == 0:
+            count_sec = "00"
+        if 0 < int(count_sec) < 10 :
+            count_sec = f"0{count_sec}"
+        canvas.itemconfig(timer_text, text=f"{count_min}:{count_sec}")
+        window.after(10, time_reducer, count-1)
 
 
 
