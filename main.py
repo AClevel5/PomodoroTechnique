@@ -11,6 +11,7 @@ WORK_MIN = 25
 SHORT_BREAK_MIN = 5
 LONG_BREAK_MIN = 20
 reps = 0
+timer = 0
 # ---------------------------- TIMER RESET ------------------------------- #
 
 # ---------------------------- TIMER MECHANISM ------------------------------- #
@@ -24,6 +25,16 @@ import time
 window = Tk()
 window.title("Pomodoro")
 window.config(padx=100, pady=50, bg=YELLOW)
+
+def reset():
+    global timer
+    global reps
+    window.after_cancel(timer)
+    canvas.itemconfig(timer_text, text="00:00")
+    title_label.config(text="Timer")
+    check_marks.config(text="")
+    reps = 0
+
 
 def start_time():
     global reps
@@ -43,6 +54,7 @@ def start_time():
 
 
 def time_reducer(count):
+    global timer
     if count >= 0:
         count_min = math.floor(count / 60)
         count_sec = count % 60
@@ -53,7 +65,7 @@ def time_reducer(count):
         if count == 0:
             start_time()
         canvas.itemconfig(timer_text, text=f"{count_min}:{count_sec}")
-        window.after(10, time_reducer, count-1)
+        timer = window.after(10, time_reducer, count-1)
 
 
 
@@ -71,7 +83,7 @@ title_label.grid(row=0, column=1)
 start_button = Button(text="Start", bg=YELLOW, fg=GREEN, highlightthickness=0, command=start_time)
 start_button.grid(row=2, column=0)
 
-restart_button = Button(text="Restart", bg=YELLOW, fg=GREEN, highlightthickness=0)
+restart_button = Button(text="Restart", bg=YELLOW, fg=GREEN, highlightthickness=0, command=reset)
 restart_button.grid(row=2, column=2)
 
 check_marks = Label(text="", fg=GREEN, bg=YELLOW, font=(FONT_NAME, 20, "bold"))
